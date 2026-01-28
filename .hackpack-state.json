@@ -1,0 +1,42 @@
+{
+  "projects": [
+    {
+      "framework": "next",
+      "projectName": "frontend",
+      "language": "ts",
+      "styling": "tailwind",
+      "uiLibrary": "shadcn",
+      "database": null,
+      "authentication": null,
+      "step": "complete",
+      "createdAt": "2026-01-17T16:43:36.768Z",
+      "updatedAt": "2026-01-17T16:46:20.444Z",
+      "fromWizard": true
+    },
+    {
+      "framework": "next",
+      "projectName": "dele",
+      "language": "ts",
+      "styling": "plain",
+      "uiLibrary": null,
+      "database": "mongodb",
+      "authentication": "clerk",
+      "step": "authentication",
+      "createdAt": "2026-01-26T05:40:58.458Z",
+      "updatedAt": "2026-01-26T05:41:52.344Z"
+    },
+    {
+      "framework": "next",
+      "projectName": "te",
+      "language": "ts",
+      "styling": "tailwind",
+      "uiLibrary": null,
+      "database": "mongodb",
+      "authentication": "clerk",
+      "step": "authentication",
+      "createdAt": "2026-01-26T06:06:54.344Z",
+      "updatedAt": "2026-01-26T06:07:01.609Z"
+    }
+  ],
+  "active": "te"
+}

@@ -1,0 +1,15 @@
+export const roleMap = {
+  "Software Engineer": "SOFTWARE_ENGINEER",
+  "Product Manager": "PRODUCT_MANAGER",
+  "Data Scientist": "DATA_SCIENTIST",
+  "UI/UX Designer": "UI_UX_DESIGNER",
+  "DevOps Engineer": "DEVOPS_ENGINEER",
+  "Frontend Developer": "FRONTEND_DEVELOPER",
+  "Backend Developer": "BACKEND_DEVELOPER",
+  "Full Stack Developer": "FULL_STACK_DEVELOPER",
+  "Marketing Manager": "MARKETING_MANAGER",
+  "Sales Executive": "SALES_EXECUTIVE",
+  "Business Analyst": "BUSINESS_ANALYST",
+  "Project Manager": "PROJECT_MANAGER",
+  "Other": "OTHER",
+};

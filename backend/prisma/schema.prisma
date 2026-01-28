@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String @id @default(uuid())
+  clerkId   String @unique
+  email     String @unique
+  username  String
+  photo     String
+  firstName String
+  lastName  String
+
+  resumes Resume[]
+}
+
+model Resume {
+  id        String      @id @default(uuid())
+  userId    String
+  fileName  String
+  rawText   String      @db.Text
+  role      ResumeRole  @default(OTHER)
+  status    ReumeStatus @default(UPLOADED)
+  createdAt DateTime    @default(now())
+
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chat      Chat?
+  questions InterviewQuestion[]
+  feedbacks Feedback[]
+
+  @@index([userId])
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  resumeId  String   @unique
+  createdAt DateTime @default(now())
+
+  resume   Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  chatId    String
+  role      Role
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+}
+
+model InterviewQuestion {
+  id         String     @id @default(uuid())
+  resumeId   String
+  question   String     @db.Text
+  difficulty Difficulty
+  topic      String?
+  createdAt  DateTime   @default(now())
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@index([resumeId])
+}
+
+model Feedback {
+  id          String   @id @default(uuid())
+  resumeId    String
+  strengths   String?  @db.Text
+  weaknesses  String?  @db.Text
+  suggestions String?  @db.Text
+  score       Int?
+  createdAt   DateTime @default(now())
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+}
+
+model TokenUsage {
+  id        String   @id @default(uuid())
+  userId    String
+  tokens    Int
+  cost      Float?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+enum Role {
+  user
+  assistant
+  system
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+  advanced
+}
+
+enum ResumeRole {
+  SOFTWARE_ENGINEER
+  PRODUCT_MANAGER
+  DATA_SCIENTIST
+  UI_UX_DESIGNER
+  DEVOPS_ENGINEER
+  FRONTEND_DEVELOPER
+  BACKEND_DEVELOPER
+  FULL_STACK_DEVELOPER
+  MARKETING_MANAGER
+  SALES_EXECUTIVE
+  BUSINESS_ANALYST
+  PROJECT_MANAGER
+  OTHER
+}
+
+enum ReumeStatus {
+  UPLOADED
+  PROCESSING
+  ERROR
+}

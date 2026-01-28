@@ -1,0 +1,115 @@
+What Each Table Does (Clearly Explained)
+1️⃣ Resume : Stores extracted resume text + metadata
+
+Resume
+
+Field	Purpose
+id	Resume unique ID
+userId	Clerk user ID
+fileName	Original file name
+rawText	OCR extracted text
+createdAt	Upload timestamp
+
+💡 Why this matters:
+
+You do not store PDFs
+
+You store clean text for LLM
+
+------
+
+2️⃣ Chat: Each resume can have multiple interview sessions
+
+Chat
+
+Field	Purpose
+id	Chat session ID
+resumeId	Linked resume
+createdAt	Session start time
+
+Example:
+
+Same resume → multiple mock interviews → multiple chats
+
+------
+
+3️⃣ Message: Each message in chat (user + AI)
+
+Message
+
+Field	Purpose
+role	user / assistant
+content	Message text
+chatId	Session reference
+
+This supports:
+
+Streaming
+
+History
+
+Follow-ups
+
+Memory
+
+-------
+4️⃣ InterviewQuestion : Stores generated interview questions
+
+InterviewQuestion
+
+Field	Purpose
+question	Generated question
+difficulty	easy / medium / hard / advanced
+topic	Redis, System Design, React, etc.
+
+This lets you build:
+
+Analytics dashboard
+
+Weak topic detection
+
+Personalized practice
+
+------
+
+5️⃣ Feedback (VERY STRONG): Stores AI-generated interview feedback
+
+Feedback
+
+Field	Purpose
+strengths	What user did well
+weaknesses	What to improve
+suggestions	Learning suggestions
+score	Overall rating
+
+🔥 This is enterprise-grade interview coaching logic
+
+-------
+
+6️⃣ TokenUsage (Optional but 🔥): Tracks LLM usage
+
+TokenUsage
+
+Field	Purpose
+tokens	Total tokens used
+cost	Estimated cost
+
+This allows:
+
+Rate limiting
+
+Cost control
+
+Free-tier enforcement
+
+🧱 Entity Relationship Diagram (Mentally)
+User (Clerk)
+   |
+   ↓
+ Resume ─── Chat ─── Message
+   |
+   ↓
+InterviewQuestion
+   |
+   ↓
+ Feedback
