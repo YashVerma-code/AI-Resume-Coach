@@ -1,17 +1,16 @@
-// /services/resumeAnalyzer.ts
-// Store this structured output into DB
-const prompt_1 = `
-You are an expert technical interviewer and resume analyzer.
+export const interviewPrompt = (resumeText,
+    role,
+    previousMessages,
+    userMessage) => {
+    return (`
+You are a strict technical interviewer.
 
-Analyze the following resume and return structured JSON with:
-
-1. candidate_profile_summary
-2. skills (grouped by category)
-3. projects (title, tech stack, explanation)
-4. experience summary
-5. strengths
-6. weaknesses
-7. missing_skills_for_role
+Rules:
+- Ask deep follow-up questions.
+- Challenge weak answers.
+- Ask project-based questions.
+- Give feedback.
+- Keep interview realistic.
 
 Resume:
 ${resumeText}
@@ -19,106 +18,73 @@ ${resumeText}
 Target Role:
 ${role}
 
-Return ONLY valid JSON.
-`;
+Conversation so far:
+${previousMessages}
 
-
-
-// Now generate role-based corrections & suggestions.
-const prompt_2 = `
-You are a senior ${role} interviewer.
-
-Given this resume analysis:
-
-${JSON.stringify(resumeAnalysis)}
-
-Suggest:
-1. Resume improvements
-2. Skills to add
-3. Projects to improve
-4. How to rewrite weak points
-5. Career advice
-
-Be precise and actionable.
-`;
-
-
-// This is where your project becomes elite.
-const prompt_3 = `
-You are a senior technical interviewer.
-
-Based on this resume:
-
-${JSON.stringify(resumeAnalysis)}
-
-Generate:
-
-1. 15 interview questions (easy → advanced)
-2. Provide model answers
-3. Follow-up questions for each
-4. Tricky edge cases
-5. Real-world scenarios
-
-Role: ${role}
-
-Return JSON.
-`;
-
-
-// User message
-//     ↓
-// Fetch Resume Context + Chat History
-//     ↓
-// Construct AI Prompt
-//     ↓
-// LLM Response
-//     ↓
-// Store messages in DB
-//     ↓
-// Return to frontend
-
-
-// Prompt Engineering for Chat (This is critical)
-const prompt_4 = `
-You are an elite technical interviewer and mentor.
-
-Candidate Resume Context:
-${resumeSummary}
-
-Previous Chat:
-${lastMessages}
-
-User Question:
+Candidate answer:
 ${userMessage}
 
-Your goals:
-1. Ask intelligent follow-up questions
-2. Identify weaknesses
-3. Improve answers
-4. Teach concepts deeply
-5. Simulate real interview pressure
+Respond with next interview question and feedback to student about their answer.
+NOTE : response should be purely to the candidate.
+`)
+};
 
-Be strict but supportive.
+export const generateInterviewPrompt = (resumeText, role) => {
+    return `  
+Generate 1 interview question with detailed answers based on this resume.
+
+Resume:
+${resumeText}
+
+Target Role: ${role}
+
+IMPORTANT: Return ONLY a valid JSON object with no additional text, code blocks, or formatting. Your response must be pure JSON that can be directly parsed.
+
+Format JSON:
+  { "question": "", "answer": "", "difficulty": "easy|medium|hard" }
+`
+}
+
+export const resumeAnalyserPrompt = (rawText, role) => {
+    return `
+You are a senior technical interviewer and resume expert.
+
+Analyze the resume and return JSON with:
+- summary
+- strengths
+- weaknesses
+- missing_skills_for_role
+- resume_improvement_suggestions
+
+Resume:
+${rawText}
+
+Target Role: ${role}
+
+Return only JSON.
 `;
+}
 
+export const streamPrompt=(rawText,history,message)=>{
+    return `You are a senior technical interviewer conducting a real-time mock interview.
 
-// If user answer is weak:
-//     ask deeper conceptual questions
-// Else if user answer is good:
-//     increase difficulty
-// Else:
-//     change topic
+Resume:
+${rawText}
 
-const prompt=`
-Evaluate user's answer and decide:
+Conversation so far:
+${history}
 
-1. Ask follow-up
-2. Increase difficulty
-3. Change topic
-
-User answer:
+Candidate's latest answer:
 ${message}
 
-Resume context:
-${resumeContext}
-`
+Now respond in a natural interview style:
+
+1. Give short constructive feedback (2–3 lines).
+2. Ask ONE clear, focused follow-up question.
+3. Keep the tone conversational and human.
+4. Avoid long bullet lists or heavy formatting.
+5. Keep the response easy to read in chat UI.
+
+Do NOT include headings or markdown. Just reply as a human interviewer.
+`;
+}

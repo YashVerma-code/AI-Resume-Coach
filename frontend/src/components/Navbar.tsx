@@ -26,31 +26,35 @@ export default function Navbar() {
         const nav = navRef.current;
         if (!nav) return;
 
-        gsap.set(nav, {
-            maxWidth: "100%",
-            y: 0,
-            borderRadius: 0,
-            boxShadow: "0 0 0 rgba(0,0,0,0)",
-            stagger: 0.05
+        const ctx = gsap.context(() => {
+            gsap.fromTo(
+                nav,
+                {
+                    maxWidth: "100%",
+                    y: 0,
+                    borderRadius: 0,
+                    boxShadow: "0 0 0 rgba(0,0,0,0)",
+                },
+                {
+                    maxWidth: "50rem",
+                    y: 16,
+                    borderRadius: 20,
+                    boxShadow: "0 0 30px rgba(239,68,68,0.35)",
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: document.body,
+                        start: "top top",
+                        end: "200px top",
+                        scrub: 1.2,
+                    },
+                    
+                }
+            );
         });
 
-        gsap.to(nav, {
-            maxWidth: "50rem",
-            y: 16,
-            borderRadius: 20,
-            boxShadow: "0 0 30px rgba(239,68,68,0.35)",
-            ease: "none",
-            scrollTrigger: {
-                trigger: document.body,
-                start: "top top",
-                end: "120px top",
-                scrub: 1
-            },
-            stagger: 0.05
-        });
-
-        return () => ScrollTrigger.getAll().forEach(t => t.kill());
+        return () => ctx.revert();
     }, []);
+
 
     return (
         <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none">

@@ -1,4 +1,5 @@
 import { ai } from "../lib/llm.js";
+import { interviewPrompt } from "../prompts/promts.js";
 
 export async function interviewChat({
   resumeText,
@@ -6,31 +7,9 @@ export async function interviewChat({
   previousMessages,
   userMessage
 }) {
-  const prompt = `
-You are a strict technical interviewer.
 
-Rules:
-- Ask deep follow-up questions.
-- Challenge weak answers.
-- Ask project-based questions.
-- Give feedback.
-- Keep interview realistic.
-
-Resume:
-${resumeText}
-
-Target Role:
-${role}
-
-Conversation so far:
-${previousMessages}
-
-Candidate answer:
-${userMessage}
-
-Respond with next interview question and feedback.
-`;
-
+  const prompt=interviewPrompt( resumeText,role, previousMessages,userMessage);
+  
   const res = await ai.chat.completions.create({
     model: "deepseek/deepseek-chat",
     messages: [{ role: "user", content: prompt }],

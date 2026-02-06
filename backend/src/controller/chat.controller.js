@@ -1,5 +1,6 @@
 import { ai } from "../lib/llm.js";
 import { prisma } from "../lib/prisma.js";
+import { streamPrompt } from "../prompts/promts.js";
 import { interviewChat } from "../services/chat.service.js";
 
 export const chatResponse = async (req, res) => {
@@ -109,27 +110,7 @@ export const streamResponse = async (req, res) => {
         .map(m => `${m.role}: ${m.content}`)
         .join("\n");
 
-    const prompt = `You are a senior technical interviewer conducting a real-time mock interview.
-
-Resume:
-${chat.resume.rawText}
-
-Conversation so far:
-${history}
-
-Candidate's latest answer:
-${message}
-
-Now respond in a natural interview style:
-
-1. Give short constructive feedback (2–3 lines).
-2. Ask ONE clear, focused follow-up question.
-3. Keep the tone conversational and human.
-4. Avoid long bullet lists or heavy formatting.
-5. Keep the response easy to read in chat UI.
-
-Do NOT include headings or markdown. Just reply as a human interviewer.
-`;
+    const prompt=streamPrompt(chat.resume.rawText,history,message);
 
     const stream = await ai.chat.completions.create({
         model: "deepseek/deepseek-chat",

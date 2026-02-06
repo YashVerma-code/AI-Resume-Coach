@@ -1,24 +1,9 @@
 import { extractJSON } from "../lib/extractJSON.js";
 import { ai } from "../lib/llm.js";
+import { resumeAnalyserPrompt } from "../prompts/promts.js";
 
 export async function analyzeResume(rawText, role) {
-  const prompt = `
-You are a senior technical interviewer and resume expert.
-
-Analyze the resume and return JSON with:
-- summary
-- strengths
-- weaknesses
-- missing_skills_for_role
-- resume_improvement_suggestions
-
-Resume:
-${rawText}
-
-Target Role: ${role}
-
-Return only JSON.
-`;
+  const prompt = resumeAnalyserPrompt(rawText, role);
 
   const response = await ai.chat.completions.create({
     model: "deepseek/deepseek-chat",

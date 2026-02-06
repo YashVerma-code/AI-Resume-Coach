@@ -21,6 +21,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AI Resume Interviewer Coach",
   description: "Web application created with HackPack",
+  icons: {
+    icon: "/logo2.png",
+  },
 };
 
 export default function RootLayout({

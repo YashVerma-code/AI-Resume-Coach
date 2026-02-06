@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useRef, useEffect } from 'react';
-import { Upload, File, X, CheckCircle2, AlertCircle, Rocket, Sparkles, ArrowRight, FileText, Image, FileArchive, Target, Brain, Lock } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Upload, File, X, CheckCircle2, Rocket, ArrowRight, FileText, Image, FileArchive, Target} from 'lucide-react';
 import "../pages/upload.css";
 import { Roles } from '@/lib/constants';
 import { useAuth } from '@clerk/nextjs';

@@ -67,6 +67,36 @@ export default function DashboardPage() {
     fetchResumes();
   }, []);
 
+  useEffect(() => {
+    let es: EventSource;
+
+    (async () => {
+      const token = await getToken();
+
+      es = new EventSource(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/resume/events?token=${token}`
+      );
+
+      es.onmessage = () => {
+        fetchResumes(); // live updates
+      };
+
+      es.onopen = () => {
+        console.log(" SSE connected");
+        fetchResumes();
+      };
+
+      es.onerror = () => {
+        console.error(" SSE error", es);
+        es.close();
+      };
+    })();
+
+    return () => {
+      console.log("Opps! SSE disconnected");
+      es?.close();
+    };
+  }, []);
 
   const handleDelete = async (id: string) => {
     const token = await getToken();

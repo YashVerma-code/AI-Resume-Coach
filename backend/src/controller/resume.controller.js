@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.js"
 import { roleMap } from "../lib/rolemap.js";
+import { addClient, removeClient, sendEvent } from "../lib/sseManager.js";
 import { generateInterviewQA } from "../services/interviewGenerator.service.js";
 import { analyzeResume } from "../services/resumeAnalyzer.service.js";
 
@@ -42,7 +43,7 @@ export const createUploadedFile = async (req, res) => {
                 status: "PROCESSING"
             },
         });
-
+        sendEvent(user.id, "resume-update", { type: "created" });
         resumeId = file.id;
         const analysis = await analyzeResume(rawText, role);
 
@@ -55,7 +56,6 @@ export const createUploadedFile = async (req, res) => {
             }
         })
 
-        const question = await generateInterviewQA(rawText, role);
         const chat = await prisma.chat.create({
             data: { resumeId: file.id }
         });
@@ -63,6 +63,17 @@ export const createUploadedFile = async (req, res) => {
         if (!chat) {
             return res.status(400).json({ success: false, message: "Chat session is not created!" });
         }
+
+        await prisma.message.create({
+            data: {
+                chatId: chat.id,
+                role: "assistant",
+                content: (`Weakness- ${analysis.weaknesses?.join("\n")}\n Suggestions -${analysis.resume_improvement_suggestions?.join("\n")}`)
+            }
+        });
+        // console.log("Analysis Report: ",analysis.strengths?.join("\n"),analysis.weaknesses?.join("\n"),analysis.resume_improvement_suggestions?.join("\n"))
+
+        const question = await generateInterviewQA(rawText, role);
 
         await prisma.message.create({
             data: {
@@ -78,6 +89,13 @@ export const createUploadedFile = async (req, res) => {
                 status: "UPLOADED"
             },
         });
+
+        sendEvent(user.id, "resume-update", {
+            type: "status",
+            resumeId: file.id,
+            status: "UPLOADED"
+        });
+
 
         return res.status(201).json({
             success: true,
@@ -166,6 +184,9 @@ export const deleteResume = async (req, res) => {
             where: { id },
         });
 
+        sendEvent(user.id, "resume-update", { type: "deleted" });
+
+
         return res.status(200).json({
             success: true,
             message: "Resume and all related data deleted successfully",
@@ -244,4 +265,33 @@ export const getResumeStats = async (req, res) => {
         console.error("Stats error:", error);
         return res.status(500).json({ success: false, message: error.message });
     }
+};
+
+
+export const resumeEvents = (req, res) => {
+    const userId = req.auth.userId;
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+
+    res.write(`event: connected\ndata: {}\n\n`);
+
+    addClient(userId, res);
+
+    const heartbeat = setInterval(() => {
+        try {
+            res.write(`event: ping\ndata: {}\n\n`);
+        } catch (e) {
+            clearInterval(heartbeat);
+            removeClient(res);
+        }
+    }, 25000);
+
+    req.on("close", () => {
+        clearInterval(heartbeat);
+        removeClient(res);
+    });
+
 };

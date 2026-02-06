@@ -6,7 +6,6 @@ import {
   Twitter,
   Linkedin,
   Mail,
-  MapPin,
   Phone,
   ArrowRight,
   Heart,
@@ -27,21 +26,6 @@ export default function Footer() {
       {/* Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-red-950/20 to-black" />
-
-        {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={`footer-particle-${i}`}
-            className="absolute w-1 h-1 bg-red-500/30 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `float-particle ${8 + Math.random() * 10}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 5}s`,
-            }}
-          />
-        ))}
-
         {/* Glow orbs */}
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-red-600/10 rounded-full blur-3xl" />
         <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-600/10 rounded-full blur-3xl" />
@@ -88,31 +72,6 @@ export default function Footer() {
                     </div>
                   </a>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Newsletter Section */}
-          <div className="border-t border-red-500/20 pt-8 pb-8">
-            <div className="max-w-2xl">
-              <h3 className="text-xl font-semibold mb-2 text-white">
-                Stay Updated
-              </h3>
-              <p className="text-slate-300 mb-4 text-sm">
-                Get the latest updates on AI interview preparation tips and
-                features.
-              </p>
-
-              <div className="flex gap-3">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 bg-black/40 border border-red-500/30 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-red-500/60 transition-all duration-300 backdrop-blur-xl"
-                />
-                <button className="group px-6 py-3 bg-gradient-to-r from-red-600 to-rose-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300 hover:scale-105 flex items-center gap-2">
-                  Subscribe
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
               </div>
             </div>
           </div>

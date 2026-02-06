@@ -3,16 +3,38 @@
 import { ArrowRight, FileText, Rocket, Upload, Flame, Zap, Brain, CheckCircle2, MessageSquare, Mic } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Features, Outputs } from "../../lib/constants";
+// import gsap from "gsap"; 
+// import ScrollTrigger from "gsap/ScrollTrigger"; 
+// import { useGSAP } from "@gsap/react";
+
 import "../pages/landing.css";
 import Link from "next/link";
+
+type Particle = {
+    left: number;
+    top: number;
+    duration: number;
+    delay: number;
+};
 
 export default function LandingPage() {
     const heroRef = useRef<HTMLDivElement>(null);
     const rocketRef = useRef<HTMLDivElement>(null);
     const titleRef = useRef<HTMLHeadingElement>(null);
     const [activeFeature, setActiveFeature] = useState<number>(0);
-
+    const [particles, setParticles] = useState<Particle[]>([]);
     // Floating animation for rocket
+    useEffect(() => {
+        const generatedParticles: Particle[] = Array.from({ length: 8 }).map(() => ({
+            left: 20 + Math.random() * 60,
+            top: 20 + Math.random() * 60,
+            duration: 3 + Math.random() * 4,
+            delay: Math.random() * 2,
+        }));
+
+        setParticles(generatedParticles);
+    }, []);
+
     useEffect(() => {
         const rocket = rocketRef.current;
         if (rocket) {
@@ -90,7 +112,7 @@ export default function LandingPage() {
                         style={{ animation: 'fadeInUp 1s ease-out 0.4s backwards' }}
                     >
                         <Link href="/upload">
-                            <button className="group relative px-8 py-4 bg-gradient-to-r from-red-900 to-rose-700 rounded-lg font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105 flex items-center gap-2" >
+                            <button className=" group relative px-8 py-4 bg-gradient-to-r from-red-900 to-rose-700 rounded-lg font-semibold text-lg overflow-hidden transition-all duration-300 hover:scale-105 flex items-center gap-2" >
                                 {/* Shimmer effect */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
 
@@ -128,13 +150,15 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto">
 
                     {/* Section Heading */}
-                    <div className="text-center mb-20">
+                    <div className="feature-section text-center mb-20">
                         <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-red-500 via-rose-400 to-red-600 bg-clip-text text-transparent animate-gradient"
-                            style={{ animation: 'fadeInUp 1s ease-out, gradient 3s ease infinite' }}>
+                            // style={{ animation: 'fadeInUp 1s ease-out, gradient 3s ease infinite' }}
+                            >
                             Mission Control Features
                         </h2>
                         <p className="mt-4 text-slate-200 text-lg max-w-2xl mx-auto"
-                            style={{ animation: 'fadeInUp 1s ease-out 0.2s backwards' }}>
+                            // style={{ animation: 'fadeInUp 1s ease-out 0.2s backwards' }}
+                            >
                             Precision engineered tools to transform your resume into an elite interview performance engine.
                         </p>
                     </div>
@@ -269,20 +293,21 @@ export default function LandingPage() {
                                     <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-rose-500/10" />
 
                                     {/* Particle effects */}
-                                    {[...Array(8)].map((_, i) => (
+                                    {particles.map((p, i) => (
                                         <div
                                             key={`sim-particle-${i}`}
                                             className="absolute w-1 h-1 bg-red-500 rounded-full"
                                             style={{
-                                                left: `${20 + Math.random() * 60}%`,
-                                                top: `${20 + Math.random() * 60}%`,
-                                                animation: `float-particle ${3 + Math.random() * 4}s ease-in-out infinite`,
-                                                animationDelay: `${Math.random() * 2}s`,
+                                                left: `${p.left}%`,
+                                                top: `${p.top}%`,
+                                                animation: `float-particle ${p.duration}s ease-in-out infinite`,
+                                                animationDelay: `${p.delay}s`,
                                                 opacity: 0.4,
                                                 boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)'
                                             }}
                                         />
                                     ))}
+
 
                                     <div className="relative text-center space-y-4">
                                         {/* Pulsing brain icon */}
